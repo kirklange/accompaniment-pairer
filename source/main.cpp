@@ -1,5 +1,6 @@
 #include "CSVReader.hpp"
 #include "Student.hpp"
+#include "util.hpp"
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -24,5 +25,10 @@ int main(int argc, char *argv[])
         cout << endl;
     }
     
+    cout << "12:30 PM is " << stotime("12:30:00 PM") << endl;
+    cout << "12:30 AM is " << stotime("12:30:00 AM") << endl;
+    cout << " 2:00 PM is " << stotime("2:00 PM") << endl;
+    cout << "11:15 AM is " << stotime("11:15 AM") << endl;
+
     return 0;
 }
