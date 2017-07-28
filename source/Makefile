@@ -4,14 +4,17 @@ RESRC_DIR = ../resrc
 CFLAGS = -std=c++11 -I.
 
 
-all : copa cp_resrc
+all : copa cp_resrc run
 
 # "Collaborative Pairer"
-copa : main.cpp csv/CSVR.cpp
+copa : main.cpp io/CSVReader.cpp
 	$(CC) $(CFLAGS) $^ -o $(BUILD_DIR)/$@
 
 cp_resrc :
 	cp -R $(RESRC_DIR)/. $(BUILD_DIR)/
+
+run :
+	cd ../build && echo '' && ./copa && cd ../source
 
 clean :
 	rm -f $(BUILD_DIR)/*

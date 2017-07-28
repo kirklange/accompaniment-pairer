@@ -1,10 +1,10 @@
-#include "CSVR.hpp"
+#include "CSVReader.hpp"
 #include <iostream>
 using namespace std;
 
 
 
-CSVR::CSVR(const std::string& pcfFileName)
+CSVReader::CSVReader(const string& pcfFileName)
 {
     if (iFile.is_open())
     {
@@ -15,13 +15,13 @@ CSVR::CSVR(const std::string& pcfFileName)
 }
 
 
-CSVR::~CSVR()
+CSVReader::~CSVReader()
 {
     iFile.close();
 }
 
 
-bool CSVR::nextCell(std::string* pnCellStr, const CSVR::Skip& pcfSkip)
+bool CSVReader::nextCell(string* pnCellStr, const CSVReader::Skip& pcfSkip)
 {
     if (iFile.is_open())
     {

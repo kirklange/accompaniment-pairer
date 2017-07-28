@@ -1,20 +1,32 @@
-#include "csv/CSVR.hpp"
+#include "io/CSVReader.hpp"
 #include <iostream>
 using namespace std;
 
 
 int main(int argc, char *argv[])
 {
-    CSVR csvr("simple.csv");
+    CSVReader csvr("simple.csv");
     string cell;
-    while (csvr.nextCell(&cell))
+    
+    while(csvr.nextCell(0, CSVReader::Skip::ROW) &&
+            csvr.nextCell(0, CSVReader::Skip::COLUMN))
     {
-        if (cell.size() == 0) cell = "<EMPTY>";
-        if (cell == "No")
+        while (csvr.nextCell(&cell))
         {
-            csvr.nextCell(0, CSVR::Skip::ROW);
+            if (cell.size() == 0)
+            {
+                cell = "<EMPTY>";
+            }
+            else if (cell == "No")
+            {
+                cout << endl;
+                break;
+            }
+            else if (cell != "Yes")
+            {
+                cout << cell << endl;
+            }
         }
-        cout << cell << endl;
     }
     
     return 0;
