@@ -1,4 +1,5 @@
 /build
+*.swp
 
 
 ### GitHub C++ Project Defaults ###

@@ -1,5 +1,4 @@
 #include "CSVReader.hpp"
-#include <iostream>
 using namespace std;
 
 
@@ -18,6 +17,18 @@ CSVReader::CSVReader(const string& pcfFileName)
 CSVReader::~CSVReader()
 {
     iFile.close();
+}
+
+
+bool CSVReader::nextCell(string* pnCellStr)
+{
+    return nextCell(pnCellStr, CSVReader::Skip::NONE);
+}
+
+
+bool CSVReader::nextCell(const CSVReader::Skip& pcfSkip)
+{
+    return nextCell(0, pcfSkip);
 }
 
 

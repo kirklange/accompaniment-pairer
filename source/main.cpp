@@ -1,32 +1,27 @@
-#include "io/CSVReader.hpp"
+#include "CSVReader.hpp"
+#include "Student.hpp"
 #include <iostream>
+#include <vector>
 using namespace std;
 
 
 int main(int argc, char *argv[])
 {
     CSVReader csvr("simple.csv");
+    vector<Student*> stus;
     string cell;
     
-    while(csvr.nextCell(0, CSVReader::Skip::ROW) &&
-            csvr.nextCell(0, CSVReader::Skip::COLUMN))
+    while(csvr.nextCell(CSVReader::Skip::ROW) &&
+            csvr.nextCell(CSVReader::Skip::COLUMN))
     {
-        while (csvr.nextCell(&cell))
-        {
-            if (cell.size() == 0)
-            {
-                cell = "<EMPTY>";
-            }
-            else if (cell == "No")
-            {
-                cout << endl;
-                break;
-            }
-            else if (cell != "Yes")
-            {
-                cout << cell << endl;
-            }
-        }
+        stus.push_back(new Student(&csvr));
+        continue;
+    }
+
+    for (const Student* lcnStu : stus)
+    {
+        lcnStu->printInfo();
+        cout << endl;
     }
     
     return 0;

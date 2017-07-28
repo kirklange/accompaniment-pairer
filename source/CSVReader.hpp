@@ -16,9 +16,11 @@ public:
     CSVReader(const std::string& pcfFileName);
     virtual ~CSVReader();
 
-    bool nextCell(std::string* pnCellStr,
-            const CSVReader::Skip& pcfSkip = NONE);
+    bool nextCell(std::string* pnCellStr);
+    bool nextCell(const CSVReader::Skip& pcfSkip);
 
 private:
     std::ifstream iFile;
+
+    bool nextCell(std::string* pnCellStr, const CSVReader::Skip& pcfSkip);
 };
