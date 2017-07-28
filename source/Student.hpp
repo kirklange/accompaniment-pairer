@@ -11,6 +11,12 @@ public:
     Student(CSVReader* pnFile);
     ~Student();
 
+    std::string getName() const;
+    std::string getEmail() const;
+    std::string getInstrument() const;
+    std::string getPrefEmail() const;
+    std::string getPrefInstrument() const;
+
     void printInfo() const;
 
 private:

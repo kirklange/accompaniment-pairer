@@ -27,6 +27,36 @@ Student::~Student()
 }
 
 
+string Student::getName() const
+{
+    return iName;
+}
+
+
+string Student::getEmail() const
+{
+    return iEmail;
+}
+
+
+string Student::getInstrument() const
+{
+    return iInstrument;
+}
+
+
+string Student::getPrefEmail() const
+{
+    return iPrefEmail;
+}
+
+
+string Student::getPrefInstrument() const
+{
+    return iPrefInstrument;
+}
+
+
 void Student::printInfo() const
 {
     cout << "Email:  " << iEmail << endl;
