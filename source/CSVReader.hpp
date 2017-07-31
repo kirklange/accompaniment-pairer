@@ -1,3 +1,6 @@
+#ifndef CSVREADER_HPP
+#define CSVREADER_HPP
+
 #include <fstream>
 #include <string>
 
@@ -24,3 +27,5 @@ private:
 
     bool nextCell(std::string* pnCellStr, const CSVReader::Skip& pcfSkip);
 };
+
+#endif // CSVREADER_HPP

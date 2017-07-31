@@ -19,6 +19,14 @@ Student::Student(CSVReader* pnFile) :
 
     if (iInstrument == "Piano") pnFile->nextCell(&iPrefInstrument);
     else pnFile->nextCell(CSVReader::Skip::COLUMN);
+    
+    string hYesNo;
+    do
+    {
+        Obligation hObligation(pnFile);
+        iObligations.push_back(hObligation);
+        pnFile->nextCell(&hYesNo);
+    } while (hYesNo == "Yes" && iObligations.size() < 10);
 }
 
 
@@ -64,6 +72,11 @@ void Student::printInfo() const
     cout << "Instru: " << iInstrument << endl;
     cout << "PrEml:  " << iPrefEmail << endl;
     cout << "PrIstr: " << iPrefInstrument << endl;
+
+    for (const Obligation& lcfOblig : iObligations)
+    {
+        lcfOblig.printInfo();
+    }
 }
 
 
