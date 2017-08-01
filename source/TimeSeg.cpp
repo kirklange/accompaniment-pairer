@@ -1,4 +1,4 @@
-#include "Obligation.hpp"
+#include "TimeSeg.hpp"
 #include "CSVReader.hpp"
 #include <iostream>
 #include <string>
@@ -6,7 +6,7 @@ using namespace std;
 
 
 
-Obligation::Obligation(CSVReader* pnFile)
+TimeSeg::TimeSeg(CSVReader* pnFile)
 {
     string hData;
     pnFile->nextCell(&hData);
@@ -20,12 +20,24 @@ Obligation::Obligation(CSVReader* pnFile)
 }
 
 
-Obligation::~Obligation()
+TimeSeg::~TimeSeg()
 {
 }
 
 
-bool Obligation::isOverlap(const Obligation* pcnOther) const
+uint16_t TimeSeg::getStartTime() const
+{
+    return iStartTime;
+}
+
+
+uint16_t TimeSeg::getEndTime() const
+{
+    return iEndTime;
+}
+
+
+bool TimeSeg::isOverlap(const TimeSeg* pcnOther) const
 {
     bool hDayMatch = false;
     for (const Weekday& lcfMeDay : iDays)
@@ -53,7 +65,7 @@ bool Obligation::isOverlap(const Obligation* pcnOther) const
 }
 
 
-void Obligation::printInfo() const
+void TimeSeg::printInfo() const
 {
     for (const Weekday& lcfDays : iDays)
     {

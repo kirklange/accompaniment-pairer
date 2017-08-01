@@ -7,7 +7,7 @@ CFLAGS = -std=c++11 -I.
 all : copa cp_resrc run
 
 # "Collaborative Pairer"
-copa : main.cpp CSVReader.cpp Student.cpp Obligation.cpp util.cpp
+copa : main.cpp CSVReader.cpp Student.cpp TimeSeg.cpp util.cpp
 	$(CC) $(CFLAGS) $^ -o $(BUILD_DIR)/$@
 
 cp_resrc :

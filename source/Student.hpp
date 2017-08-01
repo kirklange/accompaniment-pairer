@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "Obligation.hpp"
+#include "TimeSeg.hpp"
 
 class CSVReader;
 
@@ -38,7 +38,7 @@ private:
     //   circumstances) require a pianist accompanist.
     std::string iPrefEmail, iPrefInstrument;
 
-    std::vector<Obligation> iObligations;
+    std::vector<TimeSeg> iTimeSegs;
 
     // Trims everything after and including the "@" off of an email
     void trimEmail(std::string& pfEmail);

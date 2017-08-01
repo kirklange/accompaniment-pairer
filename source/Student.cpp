@@ -23,10 +23,10 @@ Student::Student(CSVReader* pnFile) :
     string hYesNo;
     do
     {
-        Obligation hObligation(pnFile);
-        iObligations.push_back(hObligation);
+        TimeSeg hTimeSeg(pnFile);
+        iTimeSegs.push_back(hTimeSeg);
         pnFile->nextCell(&hYesNo);
-    } while (hYesNo == "Yes" && iObligations.size() < 10);
+    } while (hYesNo == "Yes" && iTimeSegs.size() < 10);
 }
 
 
@@ -73,9 +73,9 @@ void Student::printInfo() const
     cout << "PrEml:  " << iPrefEmail << endl;
     cout << "PrIstr: " << iPrefInstrument << endl;
 
-    for (const Obligation& lcfOblig : iObligations)
+    for (const TimeSeg& lcfTimeSeg : iTimeSegs)
     {
-        lcfOblig.printInfo();
+        lcfTimeSeg.printInfo();
     }
 }
 
