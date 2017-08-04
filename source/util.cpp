@@ -118,10 +118,13 @@ string timetos(const uint16_t& pcfInt)
     {
         tHour = 12;
     }
-    else if (tHour > 12)
+    else if (tHour > 11)
     {
-        tHour -= 12;
         tAM = false;
+        if (tHour > 12)
+        {
+            tHour -= 12;
+        }
     }
 
     return cfill(to_string(tHour), '0', true, 2) + ":" +
