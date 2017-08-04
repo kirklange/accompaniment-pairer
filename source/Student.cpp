@@ -65,6 +65,12 @@ string Student::getPrefInstrument() const
 }
 
 
+const vector<TimeSeg>& Student::getTimeSegs() const
+{
+    return iTimeSegs;
+}
+
+
 void Student::printInfo() const
 {
     cout << "Email:  " << iEmail << endl;

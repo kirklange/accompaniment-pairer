@@ -20,13 +20,26 @@ int main(int argc, char *argv[])
 
     for (uint16_t i=0; i<stus.size(); i++)
     {
-        for (uint16_t j=i+1; j<stus.size(); j++)
-        {
-            // Compare students
-        }
-
         stus[i]->printInfo();
         cout << endl;
+        
+        for (uint16_t j=i+1; j<stus.size(); j++)
+        {
+            for (const TimeSeg& lcfTimeSegI : stus[i]->getTimeSegs())
+            {
+                for (const TimeSeg& lcfTimeSegJ : stus[j]->getTimeSegs())
+                {
+                    lcfTimeSegI.printInfo();
+                    cout << " AND" << endl;
+                    lcfTimeSegJ.printInfo();
+                    cout << " MATCH " <<
+                        lcfTimeSegI.getOverlapTime(lcfTimeSegJ) <<
+                        endl << endl;
+                }
+            }
+        }
+
+        cout << "~~~~~~~~~~" << endl;
     }
 
     return 0;

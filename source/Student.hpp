@@ -21,6 +21,7 @@ public:
     std::string getInstrument() const;
     std::string getPrefEmail() const;
     std::string getPrefInstrument() const;
+    const std::vector<TimeSeg>& getTimeSegs() const;
 
     void printInfo() const;
 
