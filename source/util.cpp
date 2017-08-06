@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include <algorithm>
 #include <cmath>
 using namespace std;
 
@@ -149,4 +150,32 @@ string daytos(const Weekday& pcfDay)
     }
 
     return "INVALID";
+}
+
+
+bool stuAvailAt(const uint16_t& pcfTime,
+        const Weekday& pcfDay, const Student& pcfStu)
+{
+    for (const TimeSeg& lcfTS : pcfStu.getTimeSegs())
+    {
+        if ( find(lcfTS.getDays().begin(), lcfTS.getDays().end(), pcfDay) !=
+                lcfTS.getDays().end() )
+        {
+            if (lcfTS.getStartTime() < lcfTS.getEndTime() &&
+                    pcfTime >= lcfTS.getStartTime() &&
+                    pcfTime <= lcfTS.getEndTime())
+            {
+                return true;
+            }
+            else if ( lcfTS.getStartTime() > lcfTS.getEndTime() &&
+                    (pcfTime >= lcfTS.getStartTime() ||
+                     pcfTime <= lcfTS.getEndTime()) )
+            {
+                return true;
+            }
+        }
+
+    }
+
+    return false;
 }

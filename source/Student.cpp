@@ -1,6 +1,8 @@
 #include "Student.hpp"
 #include "CSVReader.hpp"
+#include "Weekday.hpp"
 #include <iostream>
+#include <map>
 using namespace std;
 
 
@@ -8,7 +10,7 @@ using namespace std;
 uint16_t Student::isTally = 0;
 
 Student::Student(CSVReader* pnFile) :
-    icNumber(isTally++)
+    icNumber(isTally++), iInversed(false)
 {
     pnFile->nextCell(&iEmail);
     trimEmail(iEmail);
@@ -68,6 +70,59 @@ string Student::getPrefInstrument() const
 const vector<TimeSeg>& Student::getTimeSegs() const
 {
     return iTimeSegs;
+}
+
+
+void Student::inverseTimeSegs()
+{
+    map<Weekday, bool> tDayTally;
+    
+    for (TimeSeg& lfTimeSeg : iTimeSegs)
+    {
+        lfTimeSeg.inverse();
+
+        for (const Weekday& lcfDays : lfTimeSeg.getDays())
+        {
+            tDayTally[lcfDays] = true;
+        }
+    }
+
+    // Add unaccounted for days
+    if (!iInversed)
+    {
+        for (uint8_t lDays=0; lDays != Weekday::INVALID; lDays++)
+        {
+            if (tDayTally[(Weekday) lDays] == false)
+            {
+                TimeSeg hFullDay((Weekday) lDays, 0, 1440);
+                iTimeSegs.push_back(hFullDay);
+            }
+        }
+    }
+    // Remove unaccounted for days
+    else
+    {
+        for (uint8_t i=0; i<iTimeSegs.size(); )
+        {
+            if (iTimeSegs[i].getStartTime() == 0 &&
+                    iTimeSegs[i].getEndTime() == 1439)
+            {
+                iTimeSegs.erase(iTimeSegs.begin() + i);
+            }
+            else
+            {
+                i++;
+            }
+        }
+    }
+
+    iInversed = !iInversed;
+}
+
+
+bool Student::isInversed() const
+{
+    return iInversed;
 }
 
 

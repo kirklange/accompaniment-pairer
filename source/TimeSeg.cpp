@@ -1,5 +1,6 @@
 #include "TimeSeg.hpp"
 #include "CSVReader.hpp"
+#include "util.hpp"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -21,9 +22,23 @@ TimeSeg::TimeSeg(CSVReader* pnFile)
     iEndTime -= 1;
 }
 
+TimeSeg::TimeSeg(const Weekday& pcfDay,
+        const uint16_t& pcfStartTime, const uint16_t& pcfEndTime) :
+    iStartTime(pcfStartTime), iEndTime(pcfEndTime - 1)
+{
+    iDays.push_back(pcfDay);
+}
 
 TimeSeg::~TimeSeg()
 {
+}
+
+
+void TimeSeg::inverse()
+{
+    uint16_t hOldStartTime = iStartTime;
+    iStartTime = iEndTime;
+    iEndTime = hOldStartTime;
 }
 
 
@@ -38,71 +53,9 @@ uint16_t TimeSeg::getEndTime() const
     return iEndTime;
 }
 
-
-uint16_t TimeSeg::getOverlapTime(const TimeSeg& pcfOther) const
+const vector<Weekday>& TimeSeg::getDays() const
 {
-    // Determine how many days overlap
-    uint16_t hDaysMatch = 0;
-    for (const Weekday& lcfMeDay : iDays)
-    {
-        for (const Weekday& lcfOtherDay : pcfOther.iDays)
-        {
-            if (lcfMeDay == lcfOtherDay)
-            {
-                hDaysMatch += 1;
-            }
-        }
-    }
-
-    // Sweep algorithm
-    uint16_t rOverlap = 0;
-    if (hDaysMatch > 0)
-    {
-        const uint16_t& a = iStartTime, b = iEndTime,
-              x = pcfOther.iStartTime, y = pcfOther.iEndTime;
-        for (uint16_t i=0; i<1440; i+=15)
-        {
-            if (a < b)
-            {
-                if (x < y)
-                {
-                    if (i >= a && i >= x && i <= b && i <= y)
-                    {
-                        rOverlap += 15;
-                    }
-                }
-                else
-                {
-                    if ((i <= b && i >= x) || (i >= a && i <= y))
-                    {
-                        rOverlap += 15;
-                    }
-                }
-            }
-            else
-            {
-                if (x < y)
-                {
-                    if ((i <= y && i >= a) || (i >= x && i <= b))
-                    {
-                        rOverlap += 15;
-                    }
-                }
-                else
-                {
-                    if ((i >= a && i >= x) || (i <= b && i <= y))
-                    {
-                        rOverlap += 15;
-                    }
-                }
-            }
-        }
-
-        //rOverlap *= hDaysMatch;
-        //rOverlap += ()
-    }
-
-    return rOverlap;
+    return iDays;
 }
 
 

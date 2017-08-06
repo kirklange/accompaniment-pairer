@@ -23,6 +23,9 @@ public:
     std::string getPrefInstrument() const;
     const std::vector<TimeSeg>& getTimeSegs() const;
 
+    void inverseTimeSegs();
+    bool isInversed() const;
+
     void printInfo() const;
 
 private:
@@ -38,6 +41,9 @@ private:
     //   because non pianists will always (under this music department's
     //   circumstances) require a pianist accompanist.
     std::string iPrefEmail, iPrefInstrument;
+
+    // When inversed, missing weekdays should count as free weekdays
+    bool iInversed;
 
     std::vector<TimeSeg> iTimeSegs;
 
