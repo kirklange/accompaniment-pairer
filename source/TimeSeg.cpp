@@ -24,7 +24,8 @@ TimeSeg::TimeSeg(CSVReader* pnFile)
 
 TimeSeg::TimeSeg(const Weekday& pcfDay,
         const uint16_t& pcfStartTime, const uint16_t& pcfEndTime) :
-    iStartTime(pcfStartTime), iEndTime(pcfEndTime - 1)
+    iStartTime(roundf(float(pcfStartTime)/15.0)*15.0),
+    iEndTime( (roundf(float(pcfEndTime)/15.0)*15.0) - 1 )
 {
     iDays.push_back(pcfDay);
 }
