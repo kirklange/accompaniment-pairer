@@ -1,6 +1,7 @@
 #include "TimeSeg.hpp"
 #include "CSVReader.hpp"
 #include "util.hpp"
+#include <cmath>
 #include <iostream>
 #include <string>
 using namespace std;
