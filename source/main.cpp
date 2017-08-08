@@ -28,7 +28,18 @@ int main(int argc, char *argv[])
         for (uint16_t j=0; j<stus.size(); j++)
         {
             // Do not compare with self of course!
-            if (j != i)
+            // Compare pianos with non-pianos
+            // Compare pianos with pianos if desires a piano duet
+            // Compare non-pianos with pianos
+            // Compare if prefered instrument is the one selected (even if it
+            //   breaks the rule of comparing a piano to a piano
+            if ( j != i &&
+                    ( (stus[i]->getInstrument()=="Piano" &&
+                          stus[j]->getInstrument()!="Piano") ||
+                      (stus[i]->getInstrument()!="Piano" &&
+                          stus[j]->getInstrument()=="Piano") ||
+                      (stus[i]->getPrefInstrument()==stus[j]->getInstrument())
+                    ) )
             {
                 uint16_t overlapScore = 0;
                 
@@ -47,15 +58,26 @@ int main(int argc, char *argv[])
                 
                 cout << "    w/ " <<
                     cfill(stus[j]->getName() + ": ", ' ', false, 24) <<
-                    overlapScore << " / 3600" << endl;
+                    overlapScore << " / 3600";
+                
+                if (stus[i]->getPrefEmail()==stus[j]->getEmail())
+                {
+                    cout << " [Prefered Partner!]";
+                }
+                if (stus[i]->getPrefInstrument()==stus[j]->getInstrument())
+                {
+                    cout << " [Prefered Instrument!]";
+                }
+                
+                cout << endl;
             }
         }
 
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
     }
 
-    cout << endl << "Press ENTER to exit." << endl;
-    cin.ignore();
+    cout << endl;
+    system("pause");
 
     return 0;
 }
