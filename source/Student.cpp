@@ -94,7 +94,7 @@ void Student::inverseTimeSegs()
         {
             if (tDayTally[(Weekday) lDays] == false)
             {
-                TimeSeg hFullDay((Weekday) lDays, 0, 1440);
+                TimeSeg hFullDay((Weekday) lDays, 0, 1439);
                 iTimeSegs.push_back(hFullDay);
             }
         }

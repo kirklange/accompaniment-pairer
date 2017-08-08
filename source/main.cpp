@@ -16,15 +16,13 @@ int main(int argc, char *argv[])
             csvr.nextCell(CSVReader::Skip::COLUMN))
     {
         stus.push_back(new Student(&csvr));
-        // Makes it so that students' non-free time turns into free time
-        stus[stus.size()-1]->inverseTimeSegs();
     }
 
     for (uint16_t i=0; i<stus.size(); i++)
     {
         stus[i]->printInfo();
 
-        cout << endl << "Schedule Compatability" << endl;
+        cout << endl << "Schedule Compatability (Higher is Better)" << endl;
         // "j=i+1" would output more space efficient stuff but by having info
         //   for each student at every student the data is easier to reference
         for (uint16_t j=0; j<stus.size(); j++)
@@ -33,28 +31,30 @@ int main(int argc, char *argv[])
             if (j != i)
             {
                 uint16_t overlapScore = 0;
-
+                
                 for (uint8_t lDay=0; lDay!=Weekday::INVALID; lDay++ )
                 {
-                    for (uint16_t lTime=0; lTime<1440; lTime+=15)
+                    // Check overlap from 9AM to 9PM
+                    for (uint16_t lTime=540; lTime<1261; lTime++)
                     {
-                        if ( stuAvailAt(lTime, (Weekday) lDay, *stus[i]) &&
-                                stuAvailAt(lTime, (Weekday) lDay, *stus[j]) )
+                        if (!stuSegDuring(lTime, (Weekday) lDay, *stus[i]) &&
+                                !stuSegDuring(lTime, (Weekday) lDay, *stus[j]))
                         {
-                            overlapScore += 15;
+                            overlapScore++;
                         }
                     }
                 }
                 
                 cout << "    w/ " <<
                     cfill(stus[j]->getName() + ": ", ' ', false, 24) <<
-                    overlapScore << " / 7200" << endl;
+                    overlapScore << " / 3600" << endl;
             }
         }
 
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
     }
 
+    cout << endl << "Press ENTER to exit." << endl;
     cin.ignore();
 
     return 0;

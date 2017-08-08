@@ -19,14 +19,12 @@ TimeSeg::TimeSeg(CSVReader* pnFile)
 
     pnFile->nextCell(&hData);
     iEndTime = stotime(hData);
-    // To compensate for the sweep algorithm
-    iEndTime -= 1;
 }
 
 TimeSeg::TimeSeg(const Weekday& pcfDay,
         const uint16_t& pcfStartTime, const uint16_t& pcfEndTime) :
     iStartTime(roundf(float(pcfStartTime)/15.0)*15.0),
-    iEndTime( (roundf(float(pcfEndTime)/15.0)*15.0) - 1 )
+    iEndTime(roundf(float(pcfEndTime)/15.0)*15.0)
 {
     iDays.push_back(pcfDay);
 }
