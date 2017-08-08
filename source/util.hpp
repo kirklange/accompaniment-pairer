@@ -23,7 +23,7 @@ std::string daytos(const Weekday& pcfDay);
 
 // Is Student Available At Given Time?
 // Assumes that the student's TimeSegs have been inversed
-bool stuAvailAt(const uint16_t& pcfTime,
+bool stuSegDuring(const uint16_t& pcfTime,
         const Weekday& pcfDay, const Student& pcfStu);
 
 #endif // UTIL_HPP

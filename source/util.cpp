@@ -153,7 +153,7 @@ string daytos(const Weekday& pcfDay)
 }
 
 
-bool stuAvailAt(const uint16_t& pcfTime,
+bool stuSegDuring(const uint16_t& pcfTime,
         const Weekday& pcfDay, const Student& pcfStu)
 {
     for (const TimeSeg& lcfTS : pcfStu.getTimeSegs())
@@ -174,7 +174,6 @@ bool stuAvailAt(const uint16_t& pcfTime,
                 return true;
             }
         }
-
     }
 
     return false;
