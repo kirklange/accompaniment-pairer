@@ -26,6 +26,8 @@ public:
     void inverseTimeSegs();
     bool isInversed() const;
 
+    uint16_t scoreOverlap(const Student* pnOther) const;
+
     void printInfo() const;
 
 private:

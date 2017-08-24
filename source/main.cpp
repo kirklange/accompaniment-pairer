@@ -2,9 +2,66 @@
 #include "Student.hpp"
 #include "util.hpp"
 #include <iostream>
+#include <string>
+#include <utility>
 #include <vector>
 using namespace std;
 
+
+
+template<class T>
+void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
+        vector<vector<pair<T*, T*> > > *pnPairSets)
+{
+    if (pnObjStack->size()%2 == 0 || pnObjStack->size() < 2)
+    {
+        if (pnPairSets->size() == 0)
+        {
+            vector<pair<T*, T*> > hBlankSet;
+            pnPairSets->push_back(hBlankSet);
+        }
+
+        pair<T*, T*> hOnePair;
+        hOnePair.first = pnObjStack->at(0);
+        pnObjStack->erase(pnObjStack->begin());
+        
+        const uint16_t cStackSize = pnObjStack->size();
+        for (uint16_t i=0; i<cStackSize; i++)
+        {
+            hOnePair.second = pnObjStack->at(i);
+            pnObjStack->erase(pnObjStack->begin()+i);
+            
+            pnPairSets->back().push_back(hOnePair);
+
+            if (cStackSize > 1)
+            {
+                pushAllPairs(pcfObjName, pnObjStack, pnPairSets);
+            }
+            else
+            {
+                vector<pair<T*, T*> > hBackCopy = pnPairSets->back();
+                pnPairSets->push_back(hBackCopy);
+            }
+
+            pnPairSets->back().pop_back();
+            
+            pnObjStack->insert(pnObjStack->begin()+i, hOnePair.second);
+        }
+
+        pnObjStack->insert(pnObjStack->begin(), hOnePair.first);
+
+        if (pnPairSets->back().size() == 0)
+        {
+            pnPairSets->erase(pnPairSets->end()-1);
+        }
+    }
+    else
+    {
+        cout << "There is an invalid number of " + pcfObjName + "! Please "
+            "modify the spreadsheet until there is an even number "
+            "of at least two " + pcfObjName + "." << endl;
+    }
+}
 
 
 int main(int argc, char *argv[])
@@ -18,66 +75,35 @@ int main(int argc, char *argv[])
         stus.push_back(new Student(&csvr));
     }
 
-    for (uint16_t i=0; i<stus.size(); i++)
+    vector< vector<pair<Student*, Student*> > > stuPairSets;
+    pushAllPairs("students", &stus, &stuPairSets);
+    
+    uint16_t i = 0;
+    for (const auto& lcfPairSet : stuPairSets)
     {
-        stus[i]->printInfo();
-
-        cout << endl << "Schedule Compatability (Higher is Better)" << endl;
-        // "j=i+1" would output more space efficient stuff but by having info
-        //   for each student at every student the data is easier to reference
-        for (uint16_t j=0; j<stus.size(); j++)
+        cout << "SET " << i++ << endl;
+        uint16_t score = 0;
+        for (const auto& lcfOnePair : lcfPairSet)
         {
-            // Do not compare with self of course!
-            // Compare pianos with non-pianos
-            // Compare pianos with pianos if desires a piano duet
-            // Compare non-pianos with pianos
-            // Compare if prefered instrument is the one selected (even if it
-            //   breaks the rule of comparing a piano to a piano
-            if ( j != i &&
-                    ( (stus[i]->getInstrument()=="Piano" &&
-                          stus[j]->getInstrument()!="Piano") ||
-                      (stus[i]->getInstrument()!="Piano" &&
-                          stus[j]->getInstrument()=="Piano") ||
-                      (stus[i]->getPrefInstrument()==stus[j]->getInstrument())
-                    ) )
+            cout << "    " << lcfOnePair.first->getName() << " & " <<
+                lcfOnePair.second->getName();
+            
+            if (lcfOnePair.first->getPrefEmail() ==
+                    lcfOnePair.second->getEmail())
             {
-                uint16_t overlapScore = 0;
-                
-                for (uint8_t lDay=0; lDay!=Weekday::INVALID; lDay++ )
-                {
-                    // Check overlap from 9AM to 9PM
-                    for (uint16_t lTime=540; lTime<1261; lTime++)
-                    {
-                        if (!stuSegDuring(lTime, (Weekday) lDay, *stus[i]) &&
-                                !stuSegDuring(lTime, (Weekday) lDay, *stus[j]))
-                        {
-                            overlapScore++;
-                        }
-                    }
-                }
-                
-                cout << "    w/ " <<
-                    cfill(stus[j]->getName() + ": ", ' ', false, 24) <<
-                    overlapScore << " / 3600";
-                
-                if (stus[i]->getPrefEmail()==stus[j]->getEmail())
-                {
-                    cout << " [Prefered Partner!]";
-                }
-                if (stus[i]->getPrefInstrument()==stus[j]->getInstrument())
-                {
-                    cout << " [Prefered Instrument!]";
-                }
-                
-                cout << endl;
+                cout << " [Pref'd Partner]";
             }
+            if (lcfOnePair.first->getPrefInstrument() ==
+                    lcfOnePair.second->getInstrument())
+            {
+                cout << " [Pref'd Instrument]";
+            }
+
+            cout << endl;
+            score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
         }
-
-        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        cout << "        SCORE SUM: " << score << endl;
     }
-
-    cout << endl;
-    system("pause");
 
     return 0;
 }
