@@ -65,11 +65,12 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
 }
 
 
+// Print all possible pairs and scores for a filled pair sets vector
 void printAllPairs(const vector<vector<
-        pair<Student*, Student*> > >& pcfPairSets)
+        pair<Student*, Student*> > >& pcfStuPairSets)
 {
     uint16_t i = 0;
-    for (const auto& lcfPairSet : pcfPairSets)
+    for (const auto& lcfPairSet : pcfStuPairSets)
     {
         cout << "SET " << i++ << endl;
         uint16_t score = 0;
@@ -97,6 +98,46 @@ void printAllPairs(const vector<vector<
 }
 
 
+// For each student, print compatability with every other student
+void printAllForEach(const vector<Student*>& pcfStus)
+{
+    for (uint16_t i=0; i<pcfStus.size(); i++)
+    {
+        pcfStus[i]->printInfo();
+
+        for (uint16_t j=0; j<pcfStus.size(); j++)
+        {
+            if ( i!=j &&
+                    ( ( pcfStus[i]->getInstrument()=="Piano" &&
+                      pcfStus[j]->getInstrument()!="Piano" ) ||
+                      ( pcfStus[i]->getInstrument()!="Piano" &&
+                      pcfStus[j]->getInstrument()=="Piano" ) ||
+                      ( pcfStus[i]->getPrefInstrument()==
+                        pcfStus[j]->getInstrument() ) ) )
+            {
+                cout << "    w/ " <<
+                    cfill(pcfStus[j]->getName() + ": ", ' ', false, 24) <<
+                    pcfStus[i]->scoreOverlap(pcfStus[j]);
+
+                if (pcfStus[i]->getPrefEmail()==pcfStus[j]->getEmail())
+                {
+                    cout << " [Pref'd Partner]";
+                }
+                if (pcfStus[i]->getPrefInstrument()==
+                        pcfStus[j]->getInstrument())
+                {
+                    cout << " [Pref'd Instrument]";
+                }
+
+                cout << endl;
+            }
+        }
+
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     CSVReader csvr("simple.csv");
@@ -109,8 +150,9 @@ int main(int argc, char *argv[])
     }
 
     vector< vector<pair<Student*, Student*> > > stuPairSets;
-    pushAllPairs("students", &stus, &stuPairSets);
-    printAllPairs(stuPairSets);
+    //pushAllPairs("students", &stus, &stuPairSets);
+    //printAllPairs(stuPairSets);
+    printAllForEach(stus);
 
     return 0;
 }
