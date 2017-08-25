@@ -9,6 +9,7 @@ using namespace std;
 
 
 
+// This is a recursive function!
 template<class T>
 void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
         vector<vector<pair<T*, T*> > > *pnPairSets)
@@ -64,22 +65,11 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
 }
 
 
-int main(int argc, char *argv[])
+void printAllPairs(const vector<vector<
+        pair<Student*, Student*> > >& pcfPairSets)
 {
-    CSVReader csvr("simple.csv");
-    vector<Student*> stus;
-    
-    while(csvr.nextCell(CSVReader::Skip::ROW) &&
-            csvr.nextCell(CSVReader::Skip::COLUMN))
-    {
-        stus.push_back(new Student(&csvr));
-    }
-
-    vector< vector<pair<Student*, Student*> > > stuPairSets;
-    pushAllPairs("students", &stus, &stuPairSets);
-    
     uint16_t i = 0;
-    for (const auto& lcfPairSet : stuPairSets)
+    for (const auto& lcfPairSet : pcfPairSets)
     {
         cout << "SET " << i++ << endl;
         uint16_t score = 0;
@@ -104,6 +94,23 @@ int main(int argc, char *argv[])
         }
         cout << "        SCORE SUM: " << score << endl;
     }
+}
+
+
+int main(int argc, char *argv[])
+{
+    CSVReader csvr("simple.csv");
+    vector<Student*> stus;
+    
+    while(csvr.nextCell(CSVReader::Skip::ROW) &&
+            csvr.nextCell(CSVReader::Skip::COLUMN))
+    {
+        stus.push_back(new Student(&csvr));
+    }
+
+    vector< vector<pair<Student*, Student*> > > stuPairSets;
+    pushAllPairs("students", &stus, &stuPairSets);
+    printAllPairs(stuPairSets);
 
     return 0;
 }
