@@ -1,5 +1,6 @@
 #include "Student.hpp"
 #include "CSVReader.hpp"
+#include "util.hpp"
 #include "Weekday.hpp"
 #include <iostream>
 #include <map>
@@ -138,6 +139,43 @@ void Student::printInfo() const
     {
         lcfTimeSeg.printInfo();
     }
+}
+
+
+uint16_t Student::scoreOverlap(const Student* pnOther) const
+{
+    // hScoreBuffer helps make sure that the time segment overlap is at least
+    //   n minutes long. It doesn't help if two people's free time overlaps
+    //   by only a couple minutes... IMHO, the time overlap should be at least
+    //   30 minutes.
+    uint16_t rOverlap = 0, hScoreBuffer = 0;
+    
+    if (pnOther)
+    {
+        for (uint8_t lDay=0; lDay!=Weekday::INVALID; lDay++)
+        {
+            // Sweep from 9AM to 9PM
+            for (uint16_t lTime=540; lTime<1261; lTime++)
+            {
+                if (stuSegDuring(lTime, (Weekday) lDay, *this) &&
+                        stuSegDuring(lTime, (Weekday) lDay, *pnOther))
+                {
+                    hScoreBuffer++;
+                }
+                else
+                {
+                    if (hScoreBuffer >= 30)
+                    {
+                        rOverlap += hScoreBuffer;
+                    }
+
+                    hScoreBuffer = 0;
+                }
+            }
+        }
+    }
+    
+    return rOverlap;
 }
 
 
