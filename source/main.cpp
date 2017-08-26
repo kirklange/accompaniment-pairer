@@ -28,11 +28,10 @@ int main(int argc, char *argv[])
         for (uint16_t j=0; j<stus.size(); j++)
         {
             // Do not compare with self of course!
-            // Compare pianos with non-pianos
-            // Compare pianos with pianos if desires a piano duet
-            // Compare non-pianos with pianos
+            // Compare pianos only with non-pianos
+            // Compare non-pianos only with pianos
             // Compare if prefered instrument is the one selected (even if it
-            //   breaks the rule of comparing a piano to a piano
+            //   breaks the above two rules
             if ( j != i &&
                     ( (stus[i]->getInstrument()=="Piano" &&
                           stus[j]->getInstrument()!="Piano") ||
