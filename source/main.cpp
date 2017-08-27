@@ -29,24 +29,27 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
         const uint16_t cStackSize = pnObjStack->size();
         for (uint16_t i=0; i<cStackSize; i++)
         {
-            hOnePair.second = pnObjStack->at(i);
-            pnObjStack->erase(pnObjStack->begin()+i);
-            
-            pnPairSets->back().push_back(hOnePair);
-
-            if (cStackSize > 1)
+            if (hOnePair.first->canAttendLesson(pnObjStack->at(i)) || true)
             {
-                pushAllPairs(pcfObjName, pnObjStack, pnPairSets);
-            }
-            else
-            {
-                vector<pair<T*, T*> > hBackCopy = pnPairSets->back();
-                pnPairSets->push_back(hBackCopy);
-            }
+                hOnePair.second = pnObjStack->at(i);
+                pnObjStack->erase(pnObjStack->begin()+i);
+                
+                pnPairSets->back().push_back(hOnePair);
 
-            pnPairSets->back().pop_back();
-            
-            pnObjStack->insert(pnObjStack->begin()+i, hOnePair.second);
+                if (cStackSize > 1)
+                {
+                    pushAllPairs(pcfObjName, pnObjStack, pnPairSets);
+                }
+                else
+                {
+                    vector<pair<T*, T*> > hBackCopy = pnPairSets->back();
+                    pnPairSets->push_back(hBackCopy);
+                }
+
+                pnPairSets->back().pop_back();
+                
+                pnObjStack->insert(pnObjStack->begin()+i, hOnePair.second);
+            }
         }
 
         pnObjStack->insert(pnObjStack->begin(), hOnePair.first);
@@ -66,34 +69,47 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
 
 
 // Print all possible pairs and scores for a filled pair sets vector
-void printAllPairs(const vector<vector<
-        pair<Student*, Student*> > >& pcfStuPairSets)
+void printAllPairs(vector<vector<
+        pair<Student*, Student*> > > pStuPairSets)
 {
-    uint16_t i = 0;
-    for (const auto& lcfPairSet : pcfStuPairSets)
+    while (pStuPairSets.size() > 0)
     {
-        cout << "SET " << i++ << endl;
-        uint16_t score = 0;
-        for (const auto& lcfOnePair : lcfPairSet)
+        uint16_t i = 0, hTopScore = 0, hTopIndex = 0;
+        for (const auto& lcfPairSet : pStuPairSets)
         {
-            cout << "    " << lcfOnePair.first->getName() << " & " <<
-                lcfOnePair.second->getName();
-            
-            if (lcfOnePair.first->getPrefEmail() ==
-                    lcfOnePair.second->getEmail())
+            //cout << "SET " << i++ << endl;
+            uint16_t score = 0;
+            for (const auto& lcfOnePair : lcfPairSet)
             {
-                cout << " [Pref'd Partner]";
-            }
-            if (lcfOnePair.first->getPrefInstrument() ==
-                    lcfOnePair.second->getInstrument())
-            {
-                cout << " [Pref'd Instrument]";
-            }
+                //cout << "    " << lcfOnePair.first->getName() << " & " <<
+                //    lcfOnePair.second->getName();
+                
+                /*
+                if (lcfOnePair.first->getPrefEmail() ==
+                        lcfOnePair.second->getEmail())
+                {
+                    cout << " [Pref Partner/Prof]";
+                }
+                if (lcfOnePair.first->getPrefInstrument() ==
+                        lcfOnePair.second->getInstrument())
+                {
+                    cout << " [Pref Instrument]";
+                }
 
-            cout << endl;
-            score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
+                cout << endl;
+                */
+                score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
+            }
+            //cout << "        SCORE SUM: " << score << endl;
+
+            if (score > hTopScore)
+            {
+                hTopScore = score;
+                hTopIndex = i;
+            }
         }
-        cout << "        SCORE SUM: " << score << endl;
+
+        i++;
     }
 }
 
@@ -105,6 +121,7 @@ void printAllForEach(const vector<Student*>& pcfStus)
     {
         pcfStus[i]->printInfo();
 
+        cout << endl << "Compatability w/ All Possible Partners:" << endl;
         for (uint16_t j=0; j<pcfStus.size(); j++)
         {
             if ( i!=j &&
@@ -119,28 +136,37 @@ void printAllForEach(const vector<Student*>& pcfStus)
                     cfill(pcfStus[j]->getName() + ": ", ' ', false, 24) <<
                     pcfStus[i]->scoreOverlap(pcfStus[j]);
 
+                // Pianists need to be able to make it to at least 20 minutes
+                //   of their partner's lessons
+                if (pcfStus[i]->getInstrument()=="Piano" &&
+                        !pcfStus[i]->canAttendLesson(pcfStus[j]))
+                {
+                    cout << " [CANNOT ATTEND LESSON]";
+                }
+                
                 if (pcfStus[i]->getPrefEmail()==pcfStus[j]->getEmail())
                 {
-                    cout << " [Pref'd Partner]";
+                    cout << " [Pref Partner/Prof]";
                 }
+
                 if (pcfStus[i]->getPrefInstrument()==
                         pcfStus[j]->getInstrument())
                 {
-                    cout << " [Pref'd Instrument]";
+                    cout << " [Pref Instrument]";
                 }
 
                 cout << endl;
             }
         }
 
-        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        for (uint16_t i=0; i<60; i++) { cout << "~"; } cout << endl;
     }
 }
 
 
 int main(int argc, char *argv[])
 {
-    CSVReader csvr("simple.csv");
+    CSVReader csvr("six_folk.csv");
     vector<Student*> stus;
     
     while(csvr.nextCell(CSVReader::Skip::ROW) &&

@@ -21,8 +21,7 @@ void stoday(const std::string& pcfStr, std::vector<Weekday>* pnDays);
 std::string timetos(const std::uint16_t& pcfInt);
 std::string daytos(const Weekday& pcfDay);
 
-// Is Student Available At Given Time?
-// Assumes that the student's TimeSegs have been inversed
+// Is Student NOT Available At Given Time?
 bool stuSegDuring(const uint16_t& pcfTime,
         const Weekday& pcfDay, const Student& pcfStu);
 

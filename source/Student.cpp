@@ -15,8 +15,14 @@ Student::Student(CSVReader* pnFile) :
 {
     pnFile->nextCell(&iEmail);
     trimEmail(iEmail);
+    pnFile->nextCell(&iProfEmail);
+    trimEmail(iProfEmail);
     pnFile->nextCell(&iName);
     pnFile->nextCell(&iInstrument);
+
+    TimeSeg hLesson(pnFile);
+    iLesson = hLesson;
+    
     pnFile->nextCell(&iPrefEmail);
     trimEmail(iPrefEmail);
 
@@ -47,6 +53,12 @@ string Student::getName() const
 string Student::getEmail() const
 {
     return iEmail;
+}
+
+
+TimeSeg Student::getLesson() const
+{
+    return iLesson;
 }
 
 
@@ -129,14 +141,18 @@ bool Student::isInversed() const
 
 void Student::printInfo() const
 {
-    cout << "Email:  " << iEmail << endl;
-    cout << "Name:   " << iName << endl;
-    cout << "Instru: " << iInstrument << endl;
-    cout << "PrEml:  " << iPrefEmail << endl;
-    cout << "PrIstr: " << iPrefInstrument << endl;
+    cout << "Name:                " << iName << endl;
+    cout << "Instrument:          " << iInstrument << endl;
+    cout << "Lesson Time:         "; iLesson.printInfo();
+    cout << "Email:               " << iEmail << endl;
+    cout << "Prof Email:          " << iProfEmail << endl;
+    cout << "Pref Partner/Prof:   " << iPrefEmail << endl;
+    cout << "Pref Instrument:     " << iPrefInstrument << endl;
 
+    cout << "Obligations:" << endl;
     for (const TimeSeg& lcfTimeSeg : iTimeSegs)
     {
+        cout << "    ";
         lcfTimeSeg.printInfo();
     }
 }
@@ -172,10 +188,51 @@ uint16_t Student::scoreOverlap(const Student* pnOther) const
                     hScoreBuffer = 0;
                 }
             }
+            
+            if (hScoreBuffer >= 30)
+            {
+                rOverlap += hScoreBuffer;
+            }
         }
     }
     
     return rOverlap;
+}
+
+
+bool Student::canAttendLesson(const Student* pnOther) const
+{
+    uint16_t hScore = 0, hScoreBuffer = 0;
+    
+    for (uint16_t lTime=pnOther->getLesson().getStartTime();
+            lTime < pnOther->getLesson().getEndTime(); lTime++)
+    {
+        if (stuSegDuring(lTime, pnOther->getLesson().getDays()[0], *this))
+        {
+            hScoreBuffer++;
+        }
+        else
+        {
+            if (hScoreBuffer >= 20)
+            {
+                hScore += hScoreBuffer;
+            }
+
+            hScoreBuffer = 0;
+        }
+    }
+    
+    if (hScoreBuffer >= 20)
+    {
+        hScore += hScoreBuffer;
+    }
+
+    if (hScore >= 20)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 
