@@ -12,6 +12,7 @@ class CSVReader;
 class TimeSeg
 {
 public:
+    TimeSeg();
     TimeSeg(CSVReader* pnFile);
     TimeSeg(const Weekday& pcfDay,
             const uint16_t& pcfStartTime, const uint16_t& pcfEndTime);

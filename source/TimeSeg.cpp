@@ -8,6 +8,8 @@ using namespace std;
 
 
 
+TimeSeg::TimeSeg() {}
+
 TimeSeg::TimeSeg(CSVReader* pnFile)
 {
     string hData;
