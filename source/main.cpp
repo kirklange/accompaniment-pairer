@@ -29,7 +29,19 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
         const uint16_t cStackSize = pnObjStack->size();
         for (uint16_t i=0; i<cStackSize; i++)
         {
-            if (hOnePair.first->canAttendLesson(pnObjStack->at(i)) || true)
+            if (    (hOnePair.first->getInstrument()=="Piano" &&
+                     hOnePair.first->canAttendLesson(pnObjStack->at(i)) &&
+                     pnObjStack->at(i)->getInstrument()!="Piano") ||
+
+                    (hOnePair.first->getInstrument()!="Piano" &&
+                     pnObjStack->at(i)->getInstrument()=="Piano" &&
+                     pnObjStack->at(i)->canAttendLesson(hOnePair.first)) ||
+
+                    (hOnePair.first->getInstrument()=="Piano" &&
+                     hOnePair.first->getPrefInstrument()==
+                         pnObjStack->at(i)->getInstrument() &&
+                     pnObjStack->at(i)->getInstrument()=="Piano")
+                )
             {
                 hOnePair.second = pnObjStack->at(i);
                 pnObjStack->erase(pnObjStack->begin()+i);
@@ -68,27 +80,39 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
 }
 
 
-// Print all possible pairs and scores for a filled pair sets vector
-void printAllPairs(vector<vector<
-        pair<Student*, Student*> > > pStuPairSets)
+// Print all possible pairs (or only the best set) and display scores for
+//   each set of pairs from the vector
+void printPairSets(const bool& pcfPrintAllSets,
+        vector<vector<pair<Student*, Student*> > > pStuPairSets)
 {
-    while (pStuPairSets.size() > 0)
+    uint16_t i = 0, hTopScore = 0, hTopIndex = 0;
+    for (const auto& lcfPairSet : pStuPairSets)
     {
-        uint16_t i = 0, hTopScore = 0, hTopIndex = 0;
-        for (const auto& lcfPairSet : pStuPairSets)
+        if (pcfPrintAllSets)
         {
-            //cout << "SET " << i++ << endl;
-            uint16_t score = 0;
-            for (const auto& lcfOnePair : lcfPairSet)
+            cout << "SET #" << i+1 << endl;
+        }
+        
+        uint16_t score = 0;
+        for (const auto& lcfOnePair : lcfPairSet)
+        {
+            if (pcfPrintAllSets)
             {
-                //cout << "    " << lcfOnePair.first->getName() << " & " <<
-                //    lcfOnePair.second->getName();
+                cout << "    " << lcfOnePair.first->getName() << " & " <<
+                    lcfOnePair.second->getName();
                 
-                /*
                 if (lcfOnePair.first->getPrefEmail() ==
                         lcfOnePair.second->getEmail())
                 {
-                    cout << " [Pref Partner/Prof]";
+                    if (lcfOnePair.second->getPrefEmail() ==
+                            lcfOnePair.first->getEmail())
+                    {
+                        cout << " [Pref Partner MUTUAL]";
+                    }
+                    else
+                    {
+                        cout << " [Pref Partner]";
+                    }
                 }
                 if (lcfOnePair.first->getPrefInstrument() ==
                         lcfOnePair.second->getInstrument())
@@ -97,20 +121,25 @@ void printAllPairs(vector<vector<
                 }
 
                 cout << endl;
-                */
-                score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
             }
-            //cout << "        SCORE SUM: " << score << endl;
+            score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
+        }
+        if (pcfPrintAllSets)
+        {
+            cout << "        SCORE SUM: " << score << endl;
+        }
 
-            if (score > hTopScore)
-            {
-                hTopScore = score;
-                hTopIndex = i;
-            }
+        if (score > hTopScore)
+        {
+            hTopScore = score;
+            hTopIndex = i;
         }
 
         i++;
     }
+
+    cout << endl << "The best set is set #" << hTopIndex+1 << " with a score of "
+        << hTopScore << endl;
 }
 
 
@@ -176,9 +205,12 @@ int main(int argc, char *argv[])
     }
 
     vector< vector<pair<Student*, Student*> > > stuPairSets;
-    //pushAllPairs("students", &stus, &stuPairSets);
-    //printAllPairs(stuPairSets);
+    
     printAllForEach(stus);
+
+    cout << endl << "ALL POSSIBLE SETS" << endl;
+    pushAllPairs("students", &stus, &stuPairSets);
+    printPairSets(true, stuPairSets);
 
     return 0;
 }

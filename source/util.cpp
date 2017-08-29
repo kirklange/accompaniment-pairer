@@ -1,6 +1,7 @@
 #include "util.hpp"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 using namespace std;
 
 
@@ -158,7 +159,7 @@ bool stuSegDuring(const uint16_t& pcfTime,
 {
     for (const TimeSeg& lcfTS : pcfStu.getTimeSegs())
     {
-        if ( find(lcfTS.getDays().begin(), lcfTS.getDays().end(), pcfDay) ==
+        if ( find(lcfTS.getDays().begin(), lcfTS.getDays().end(), pcfDay) !=
                 lcfTS.getDays().end() )
         {
             if (lcfTS.getStartTime() < lcfTS.getEndTime() &&

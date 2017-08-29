@@ -203,11 +203,10 @@ uint16_t Student::scoreOverlap(const Student* pnOther) const
 bool Student::canAttendLesson(const Student* pnOther) const
 {
     uint16_t hScore = 0, hScoreBuffer = 0;
-    
     for (uint16_t lTime=pnOther->getLesson().getStartTime();
             lTime < pnOther->getLesson().getEndTime(); lTime++)
     {
-        if (stuSegDuring(lTime, pnOther->getLesson().getDays()[0], *this))
+        if (!stuSegDuring(lTime, pnOther->getLesson().getDays()[0], *this))
         {
             hScoreBuffer++;
         }
