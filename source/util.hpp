@@ -13,7 +13,7 @@ std::string cfill(std::string prFillMe, const char& pcfFillWith,
         const bool& pcfFillLeft, const uint16_t& pcfFillLen);
 
 // string to time; string to day
-std::uint16_t stotime(const std::string& pcfStr);
+std::uint16_t stotime(std::string pStr);
 Weekday stoday(const std::string& pcfStr);
 void stoday(const std::string& pcfStr, std::vector<Weekday>* pnDays);
 

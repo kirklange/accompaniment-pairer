@@ -28,16 +28,18 @@ string cfill(string prFillMe, const char& pcfFillWith,
 // SOME OF THE ASSUMPTIONS
 //   1) First section is hour
 //   2) Seconds section (if there is one) is always zero
-//   3) Format is 12 hour AM/PM time
+//   3) Format is 12 hour AM/PM time OR 24 hour time
 //   NO MORE: 4) Minutes are to be rounded to the nearest 15
-uint16_t stotime(const string& pcfStr)
+uint16_t stotime(string pStr)
 {
+    pStr += " ";
+    
     const string cNum = "0123456789";
     string hSectStr;
     bool gParseHour = true, gFrontDigit = true;
     uint16_t rTime = 0;
 
-    for (const char& lcfChar : pcfStr)
+    for (const char& lcfChar : pStr)
     {
         if (lcfChar == ':' || lcfChar == ' ')
         {
