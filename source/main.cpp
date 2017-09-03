@@ -11,8 +11,10 @@ using namespace std;
 
 // This is a recursive function!
 template<class T>
-void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
-        vector<vector<pair<T*, T*> > > *pnPairSets)
+void pushAllPairs(vector<T*> *pnObjStack,
+        vector<vector<pair<T*, T*> > > *pnPairSets,
+     // Set this to false, if you dare
+        const bool& pcfFactorAttendLesson)
 {
     if (pnObjStack->size()%2 == 0 || pnObjStack->size() < 2)
     {
@@ -30,12 +32,14 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
         for (uint16_t i=0; i<cStackSize; i++)
         {
             if (    (hOnePair.first->getInstrument()=="Piano" &&
-                     hOnePair.first->canAttendLesson(pnObjStack->at(i)) &&
+                        (hOnePair.first->canAttendLesson(pnObjStack->at(i)) ||
+                         !pcfFactorAttendLesson) &&
                      pnObjStack->at(i)->getInstrument()!="Piano") ||
 
                     (hOnePair.first->getInstrument()!="Piano" &&
                      pnObjStack->at(i)->getInstrument()=="Piano" &&
-                     pnObjStack->at(i)->canAttendLesson(hOnePair.first)) ||
+                        (pnObjStack->at(i)->canAttendLesson(hOnePair.first) ||
+                         !pcfFactorAttendLesson)) ||
 
                     (hOnePair.first->getInstrument()=="Piano" &&
                      hOnePair.first->getPrefInstrument()==
@@ -50,7 +54,7 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
 
                 if (cStackSize > 1)
                 {
-                    pushAllPairs(pcfObjName, pnObjStack, pnPairSets);
+                    pushAllPairs(pnObjStack, pnPairSets, pcfFactorAttendLesson);
                 }
                 else
                 {
@@ -73,129 +77,144 @@ void pushAllPairs(const string& pcfObjName, vector<T*> *pnObjStack,
     }
     else
     {
-        cout << "There is an invalid number of " + pcfObjName + "! Please "
-            "modify the spreadsheet until there is an even number "
-            "of at least two " + pcfObjName + "." << endl;
+        cout << "There is an invalid number of entries! Please modify the "
+            "spreadsheet until it is an even number." << endl;
     }
 }
 
 
 // Print all possible pairs (or only the best set) and display scores for
 //   each set of pairs from the vector
-void printPairSets(const bool& pcfPrintAllSets,
-        vector<vector<pair<Student*, Student*> > > pStuPairSets)
+void printPairSets(vector<vector<pair<Student*, Student*> > > pStuPairSets,
+        const bool& pcfPrintAllSets)
 {
-    uint16_t i = 0, hTopScore = 0, hTopIndex = 0;
-    for (const auto& lcfPairSet : pStuPairSets)
+    if (pStuPairSets.size() > 0)
     {
-        if (pcfPrintAllSets)
-        {
-            cout << "SET #" << i+1 << endl;
-        }
-        
-        uint16_t score = 0;
-        for (const auto& lcfOnePair : lcfPairSet)
+        cout << "ALL POSSIBLE SETS" << endl;
+
+        uint16_t i = 0, hTopScore = 0, hTopIndex = 0;
+        for (const auto& lcfPairSet : pStuPairSets)
         {
             if (pcfPrintAllSets)
             {
-                cout << "    " << lcfOnePair.first->getName() << " & " <<
-                    lcfOnePair.second->getName();
-                
-                if (lcfOnePair.first->getPrefEmail() ==
-                        lcfOnePair.second->getEmail())
-                {
-                    if (lcfOnePair.second->getPrefEmail() ==
-                            lcfOnePair.first->getEmail())
-                    {
-                        cout << " [Pref Partner MUTUAL]";
-                    }
-                    else
-                    {
-                        cout << " [Pref Partner]";
-                    }
-                }
-                if (lcfOnePair.first->getPrefInstrument() ==
-                        lcfOnePair.second->getInstrument())
-                {
-                    cout << " [Pref Instrument]";
-                }
-
-                cout << endl;
+                cout << "SET #" << i+1 << endl;
             }
-            score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
-        }
-        if (pcfPrintAllSets)
-        {
-            cout << "        SCORE SUM: " << score << endl;
+            
+            uint16_t score = 0;
+            for (const auto& lcfOnePair : lcfPairSet)
+            {
+                if (pcfPrintAllSets)
+                {
+                    cout << "    " << lcfOnePair.first->getName() << " & " <<
+                        lcfOnePair.second->getName();
+                    
+                    if (lcfOnePair.first->getPrefEmail() ==
+                            lcfOnePair.second->getEmail())
+                    {
+                        if (lcfOnePair.second->getPrefEmail() ==
+                                lcfOnePair.first->getEmail())
+                        {
+                            cout << " [Pref Partner MUTUAL]";
+                        }
+                        else
+                        {
+                            cout << " [Pref Partner]";
+                        }
+                    }
+                    if (lcfOnePair.first->getPrefInstrument() ==
+                            lcfOnePair.second->getInstrument())
+                    {
+                        cout << " [Pref Instrument]";
+                    }
+
+                    cout << endl;
+                }
+                score += lcfOnePair.first->scoreOverlap(lcfOnePair.second);
+            }
+            if (pcfPrintAllSets)
+            {
+                cout << "        SCORE SUM: " << score << endl;
+            }
+
+            if (score > hTopScore)
+            {
+                hTopScore = score;
+                hTopIndex = i;
+            }
+
+            i++;
         }
 
-        if (score > hTopScore)
-        {
-            hTopScore = score;
-            hTopIndex = i;
-        }
-
-        i++;
+        cout << endl << "The best set is set #" << hTopIndex+1 <<
+            " with a score of " << hTopScore << endl;
     }
-
-    cout << endl << "The best set is set #" << hTopIndex+1 << " with a score of "
-        << hTopScore << endl;
+    else
+    {
+        cout << "There is no possible way to pair everyone together such that "
+            "every pianist can attend their collaborator's music lessons."
+            << endl;
+    }
 }
 
 
 // For each student, print compatability with every other student
-void printAllForEach(const vector<Student*>& pcfStus)
+void printAllForEach(const vector<Student*>& pcfStus,
+        const bool& pcfPianistsOnly)
 {
     for (uint16_t i=0; i<pcfStus.size(); i++)
     {
-        pcfStus[i]->printInfo();
-
-        cout << endl << "Compatability w/ All Possible Partners:" << endl;
-        for (uint16_t j=0; j<pcfStus.size(); j++)
+        if (pcfPianistsOnly && pcfStus[i]->getInstrument()=="Piano")
         {
-            if ( i!=j &&
-                    ( ( pcfStus[i]->getInstrument()=="Piano" &&
-                      pcfStus[j]->getInstrument()!="Piano" ) ||
-                      ( pcfStus[i]->getInstrument()!="Piano" &&
-                      pcfStus[j]->getInstrument()=="Piano" ) ||
-                      ( pcfStus[i]->getPrefInstrument()==
-                        pcfStus[j]->getInstrument() ) ) )
+            pcfStus[i]->printInfo();
+
+            cout << endl << "Compatability w/ All Possible Partners:" << endl;
+            for (uint16_t j=0; j<pcfStus.size(); j++)
             {
-                cout << "    w/ " <<
-                    cfill(pcfStus[j]->getName() + ": ", ' ', false, 24) <<
-                    pcfStus[i]->scoreOverlap(pcfStus[j]);
-
-                // Pianists need to be able to make it to at least 20 minutes
-                //   of their partner's lessons
-                if (pcfStus[i]->getInstrument()=="Piano" &&
-                        !pcfStus[i]->canAttendLesson(pcfStus[j]))
+                if ( i!=j &&
+                        ( ( pcfStus[i]->getInstrument()=="Piano" &&
+                          pcfStus[j]->getInstrument()!="Piano" ) ||
+                          ( pcfStus[i]->getInstrument()!="Piano" &&
+                          pcfStus[j]->getInstrument()=="Piano" ) ||
+                          ( pcfStus[i]->getPrefInstrument()==
+                            pcfStus[j]->getInstrument() ) ) )
                 {
-                    cout << " [CANNOT ATTEND LESSON]";
-                }
-                
-                if (pcfStus[i]->getPrefEmail()==pcfStus[j]->getEmail())
-                {
-                    cout << " [Pref Partner/Prof]";
-                }
+                    cout << "    w/ " <<
+                        cfill(pcfStus[j]->getName() + ": ", ' ', false, 24) <<
+                        pcfStus[i]->scoreOverlap(pcfStus[j]);
 
-                if (pcfStus[i]->getPrefInstrument()==
-                        pcfStus[j]->getInstrument())
-                {
-                    cout << " [Pref Instrument]";
-                }
+                    // Pianists need to be able to make it to at least 20
+                    //   minutes of their partner's lessons
+                    if (pcfStus[i]->getInstrument()=="Piano" &&
+                        !pcfStus[i]->canAttendLesson(pcfStus[j]) &&
+                        pcfStus[j]->getInstrument()!="Piano")
+                    {
+                        cout << " [CANNOT ATTEND LESSON]";
+                    }
+                    
+                    if (pcfStus[i]->getPrefEmail()==pcfStus[j]->getEmail())
+                    {
+                        cout << " [Pref Partner/Prof]";
+                    }
 
-                cout << endl;
+                    if (pcfStus[i]->getPrefInstrument()==
+                            pcfStus[j]->getInstrument())
+                    {
+                        cout << " [Pref Instrument]";
+                    }
+
+                    cout << endl;
+                }
             }
-        }
 
-        for (uint16_t i=0; i<60; i++) { cout << "~"; } cout << endl;
+            for (uint16_t i=0; i<60; i++) { cout << "~"; } cout << endl;
+        }
     }
 }
 
 
 int main(int argc, char *argv[])
 {
-    CSVReader csvr("six_folk.csv");
+    CSVReader csvr("real_11x2.csv");
     vector<Student*> stus;
     
     while(csvr.nextCell(CSVReader::Skip::ROW) &&
@@ -206,11 +225,11 @@ int main(int argc, char *argv[])
 
     vector< vector<pair<Student*, Student*> > > stuPairSets;
     
-    printAllForEach(stus);
+    printAllForEach(stus, true);
 
-    cout << endl << "ALL POSSIBLE SETS" << endl;
-    pushAllPairs("students", &stus, &stuPairSets);
-    printPairSets(true, stuPairSets);
+    cout << endl;
+    pushAllPairs(&stus, &stuPairSets, true);
+    printPairSets(stuPairSets, true);
 
     return 0;
 }

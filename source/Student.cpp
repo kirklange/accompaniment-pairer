@@ -30,13 +30,15 @@ Student::Student(CSVReader* pnFile) :
     if (iInstrument == "Piano") pnFile->nextCell(&iPrefInstrument);
     else pnFile->nextCell(CSVReader::Skip::COLUMN);
     
+    if (iPrefInstrument == "Piano (Duet)") iPrefInstrument = "Piano";
+    
     string hYesNo;
     do
     {
         TimeSeg hTimeSeg(pnFile);
         iTimeSegs.push_back(hTimeSeg);
-        pnFile->nextCell(&hYesNo);
-    } while (hYesNo == "Yes" && iTimeSegs.size() < 9);
+        if(iTimeSegs.size() < 10) pnFile->nextCell(&hYesNo);
+    } while (hYesNo == "Yes" && iTimeSegs.size() < 10);
 }
 
 
