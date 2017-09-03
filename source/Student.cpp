@@ -18,6 +18,7 @@ Student::Student(CSVReader* pnFile) :
     pnFile->nextCell(&iProfEmail);
     trimEmail(iProfEmail);
     pnFile->nextCell(&iName);
+    pnFile->nextCell(&iPhone);
     pnFile->nextCell(&iInstrument);
 
     TimeSeg hLesson(pnFile);
@@ -35,7 +36,7 @@ Student::Student(CSVReader* pnFile) :
         TimeSeg hTimeSeg(pnFile);
         iTimeSegs.push_back(hTimeSeg);
         pnFile->nextCell(&hYesNo);
-    } while (hYesNo == "Yes" && iTimeSegs.size() < 10);
+    } while (hYesNo == "Yes" && iTimeSegs.size() < 9);
 }
 
 
@@ -47,6 +48,12 @@ Student::~Student()
 string Student::getName() const
 {
     return iName;
+}
+
+
+string Student::getPhone() const
+{
+    return iPhone;
 }
 
 
@@ -143,7 +150,14 @@ void Student::printInfo() const
 {
     cout << "Name:                " << iName << endl;
     cout << "Instrument:          " << iInstrument << endl;
-    cout << "Lesson Time:         "; iLesson.printInfo();
+    
+    if (iLesson.getStartTime() != iLesson.getEndTime())
+    {
+        cout << "Lesson Time:         ";
+        iLesson.printInfo();
+    }
+
+    cout << "Phone #:             " << iPhone << endl;
     cout << "Email:               " << iEmail << endl;
     cout << "Prof Email:          " << iProfEmail << endl;
     cout << "Pref Partner/Prof:   " << iPrefEmail << endl;

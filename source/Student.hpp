@@ -17,6 +17,7 @@ public:
     virtual ~Student();
 
     std::string getName() const;
+    std::string getPhone() const;
     std::string getEmail() const;
     std::string getInstrument() const;
     TimeSeg getLesson() const;
@@ -39,7 +40,7 @@ private:
     static std::uint16_t isTally;
 
     // Student's own info
-    std::string iName, iEmail, iProfEmail, iInstrument;
+    std::string iName, iEmail, iProfEmail, iInstrument, iPhone;
     TimeSeg iLesson;
     // Student's accompanist preferences
     // iPrefInstrument does not matter if iInstrument is not "Piano". This is
