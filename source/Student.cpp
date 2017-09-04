@@ -23,22 +23,27 @@ Student::Student(CSVReader* pnFile) :
 
     TimeSeg hLesson(pnFile);
     iLesson = hLesson;
-    
-    pnFile->nextCell(&iPrefEmail);
-    trimEmail(iPrefEmail);
 
-    if (iInstrument == "Piano") pnFile->nextCell(&iPrefInstrument);
-    else pnFile->nextCell(CSVReader::Skip::COLUMN);
-    
-    if (iPrefInstrument == "Piano (Duet)") iPrefInstrument = "Piano";
-    
-    string hYesNo;
-    do
+    // Only pianists are shown these questions
+    if (iInstrument == "Piano")
     {
-        TimeSeg hTimeSeg(pnFile);
-        iTimeSegs.push_back(hTimeSeg);
-        if(iTimeSegs.size() < 10) pnFile->nextCell(&hYesNo);
-    } while (hYesNo == "Yes" && iTimeSegs.size() < 10);
+        pnFile->nextCell(&iPrefEmail);
+        trimEmail(iPrefEmail);
+
+        if (iInstrument == "Piano") pnFile->nextCell(&iPrefInstrument);
+        else pnFile->nextCell(CSVReader::Skip::COLUMN);
+        
+        // Feature removed from Google form
+        //if (iPrefInstrument == "Piano (Duet)") iPrefInstrument = "Piano";
+        
+        string hYesNo;
+        do
+        {
+            TimeSeg hTimeSeg(pnFile);
+            iTimeSegs.push_back(hTimeSeg);
+            if(iTimeSegs.size() < 10) pnFile->nextCell(&hYesNo);
+        } while (hYesNo == "Yes" && iTimeSegs.size() < 10);
+    }
 }
 
 
@@ -150,20 +155,20 @@ bool Student::isInversed() const
 
 void Student::printInfo() const
 {
-    cout << "Name:                " << iName << endl;
-    cout << "Instrument:          " << iInstrument << endl;
+    cout << "Name:                       " << iName << endl;
+    cout << "Instrument:                 " << iInstrument << endl;
     
     if (iLesson.getStartTime() != iLesson.getEndTime())
     {
-        cout << "Lesson Time:         ";
+        cout << "Lesson Time:                ";
         iLesson.printInfo();
     }
 
-    cout << "Phone #:             " << iPhone << endl;
-    cout << "Email:               " << iEmail << endl;
-    cout << "Prof Email:          " << iProfEmail << endl;
-    cout << "Pref Partner/Prof:   " << iPrefEmail << endl;
-    cout << "Pref Instrument:     " << iPrefInstrument << endl;
+    cout << "Phone #:                    " << iPhone << endl;
+    cout << "Email:                      " << iEmail << endl;
+    cout << "Professor's Email:          " << iProfEmail << endl;
+    cout << "Preferred Partner's Email:  " << iPrefEmail << endl;
+    cout << "Preferred Instrument:       " << iPrefInstrument << endl;
 
     cout << "Obligations:" << endl;
     for (const TimeSeg& lcfTimeSeg : iTimeSegs)
@@ -254,4 +259,9 @@ bool Student::canAttendLesson(const Student* pnOther) const
 void Student::trimEmail(string& pfEmail)
 {
     pfEmail = pfEmail.substr(0, pfEmail.find("@"));
+    
+    for (char& c : pfEmail)
+    {
+        if (c <= 'Z') c += ('z' - 'Z');
+    }
 }

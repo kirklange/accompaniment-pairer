@@ -150,9 +150,10 @@ void printPairSets(vector<vector<pair<Student*, Student*> > > pStuPairSets,
     }
     else
     {
-        cout << "There is no possible way to pair everyone together such that "
-            "every pianist can attend their collaborator's music lessons."
-            << endl;
+        cout << "Either there is a different number of pianists from "
+            "non-pianists, or there is no possible way to pair everyone "
+            "together such that every pianist can attend their collaborator's "
+            "music lessons." << endl;
     }
 }
 
@@ -167,7 +168,7 @@ void printAllForEach(const vector<Student*>& pcfStus,
         {
             pcfStus[i]->printInfo();
 
-            cout << endl << "Compatability w/ All Possible Partners:" << endl;
+            cout << endl << "List of All Possible Partners:" << endl;
             for (uint16_t j=0; j<pcfStus.size(); j++)
             {
                 if ( i!=j &&
@@ -178,9 +179,10 @@ void printAllForEach(const vector<Student*>& pcfStus,
                           ( pcfStus[i]->getPrefInstrument()==
                             pcfStus[j]->getInstrument() ) ) )
                 {
-                    cout << "    w/ " <<
-                        cfill(pcfStus[j]->getName() + ": ", ' ', false, 24) <<
-                        pcfStus[i]->scoreOverlap(pcfStus[j]);
+                    cout << "    " <<
+                        cfill(pcfStus[j]->getName() + " (" +
+                                pcfStus[j]->getEmail() + ") ", ' ', false, 36)
+                        /*<< pcfStus[i]->scoreOverlap(pcfStus[j])*/;
 
                     // Pianists need to be able to make it to at least 20
                     //   minutes of their partner's lessons
@@ -193,13 +195,13 @@ void printAllForEach(const vector<Student*>& pcfStus,
                     
                     if (pcfStus[i]->getPrefEmail()==pcfStus[j]->getEmail())
                     {
-                        cout << " [Pref Partner/Prof]";
+                        cout << " [Wants to work with this person!]";
                     }
 
                     if (pcfStus[i]->getPrefInstrument()==
                             pcfStus[j]->getInstrument())
                     {
-                        cout << " [Pref Instrument]";
+                        cout << " [Preferred Instrument]";
                     }
 
                     cout << endl;
@@ -223,13 +225,22 @@ int main(int argc, char *argv[])
         stus.push_back(new Student(&csvr));
     }
 
+    // For testing when there's not same amount of pianists as non-pianists
+    if (false)
+    {
+        stus.pop_back();
+        stus.pop_back();
+    }
+
     vector< vector<pair<Student*, Student*> > > stuPairSets;
     
     printAllForEach(stus, true);
 
+    /*
     cout << endl;
     pushAllPairs(&stus, &stuPairSets, true);
     printPairSets(stuPairSets, true);
+    */
 
     return 0;
 }
