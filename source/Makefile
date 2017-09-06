@@ -4,7 +4,7 @@ RESRC_DIR = ../resrc
 CFLAGS = -std=c++11 -I.
 
 
-all : copa cp_resrc run
+all : clean copa cp_resrc run
 
 # "Collaborative Pairer"
 copa : main.cpp CSVReader.cpp Student.cpp TimeSeg.cpp util.cpp

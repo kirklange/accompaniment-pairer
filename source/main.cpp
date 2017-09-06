@@ -179,9 +179,14 @@ void printAllForEach(const vector<Student*>& pcfStus,
                           ( pcfStus[i]->getPrefInstrument()==
                             pcfStus[j]->getInstrument() ) ) )
                 {
-                    cout << "    " <<
-                        cfill(pcfStus[j]->getName() + " (" +
-                                pcfStus[j]->getEmail() + ") ", ' ', false, 36)
+                    cout <<
+                        cfill(pcfStus[j]->getInstrument() +
+                                " | ", ' ', true, 16) <<
+                        cfill(pcfStus[j]->getEmail() + " | ", ' ', true, 11) <<
+                        cfill(pcfStus[j]->getName() + " ", ' ', true, 24)
+                        //cfill(pcfStus[j]->getInstrument() + " | " +
+                        //        pcfStus[j]->getEmail() + " | " +
+                        //        pcfStus[j]->getName() + " ", ' ', true, 40)
                         /*<< pcfStus[i]->scoreOverlap(pcfStus[j])*/;
 
                     // Pianists need to be able to make it to at least 20
@@ -190,18 +195,18 @@ void printAllForEach(const vector<Student*>& pcfStus,
                         !pcfStus[i]->canAttendLesson(pcfStus[j]) &&
                         pcfStus[j]->getInstrument()!="Piano")
                     {
-                        cout << " [CANNOT ATTEND LESSON]";
+                        cout << " [X]";
                     }
                     
                     if (pcfStus[i]->getPrefEmail()==pcfStus[j]->getEmail())
                     {
-                        cout << " [Wants to work with this person!]";
+                        cout << " [PP!!!]";
                     }
 
                     if (pcfStus[i]->getPrefInstrument()==
                             pcfStus[j]->getInstrument())
                     {
-                        cout << " [Preferred Instrument]";
+                        cout << " [PI]";
                     }
 
                     cout << endl;
@@ -216,7 +221,7 @@ void printAllForEach(const vector<Student*>& pcfStus,
 
 int main(int argc, char *argv[])
 {
-    CSVReader csvr("real_11x2.csv");
+    CSVReader csvr("real.csv");
     vector<Student*> stus;
     
     while(csvr.nextCell(CSVReader::Skip::ROW) &&
