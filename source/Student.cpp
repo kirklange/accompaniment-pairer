@@ -262,6 +262,6 @@ void Student::trimEmail(string& pfEmail)
     
     for (char& c : pfEmail)
     {
-        if (c <= 'Z') c += ('z' - 'Z');
+        if (c >= 'A' && c <= 'Z') c += ('z' - 'Z');
     }
 }
